@@ -1,4 +1,4 @@
-Cuntext-aware-musicplayer
+Context-aware-musicplayer
 =========================
 
-Android music player application that uses sensorst to detect envoronment.
+Android music player application that uses sensors to detect envoronment.
