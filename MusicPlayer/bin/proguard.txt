@@ -1,0 +1,6 @@
+# view AndroidManifest.xml #generated:12
+-keep class com.androidhive.musicplayer.AndroidBuildingMusicPlayerActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:23
+-keep class com.androidhive.musicplayer.PlayListActivity { <init>(...); }
+
