@@ -9,7 +9,7 @@ import android.os.Environment;
 
 public class SongsManager {
 	// SDCard Path
-	final String MEDIA_PATH = new String("/storage/extSdCard/");
+	final String MEDIA_PATH = new String("/storage/");
 	final static String MEDIA_PATH2 = new String("/storage/SD card/Media/Music/Arch Enemy");
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	

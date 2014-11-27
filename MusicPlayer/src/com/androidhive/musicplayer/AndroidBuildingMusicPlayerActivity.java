@@ -43,7 +43,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	private boolean isShuffle = false;
 	private boolean isRepeat = false;
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
-	
+        private String currentActivity;
+        private TextView activityField;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		songTitleLabel = (TextView) findViewById(R.id.songTitle);
 		songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
 		songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
+		activityField = (TextView) findViewById(R.id.activityField);
 		
 		// Mediaplayer
 		mp = new MediaPlayer();

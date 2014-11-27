@@ -35,6 +35,26 @@
             android:src="@drawable/btn_playlist"
             android:background="@null"/>
     </LinearLayout>
+    <LinearLayout 
+        android:id="@+id/player_activity_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:paddingLeft="5dp"
+        android:layout_below="@id/player_header_bg"
+        android:paddingRight="5dp">
+        <!-- Current activity -->
+        <TextView 
+            android:id="@+id/activityField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textSize="16dp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:text="Activity ..."
+            android:layout_marginTop="10dp"/>"
+    </LinearLayout>
     
     <!-- Song Thumbnail Image -->
     <LinearLayout 
@@ -44,7 +64,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center"
-        android:layout_below="@id/player_header_bg">
+        android:layout_below="@id/player_activity_bg">
     	<ImageView android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/adele"/>    
