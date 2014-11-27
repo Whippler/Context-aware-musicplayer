@@ -54,26 +54,26 @@ public class SongsManager {
                     if (file.isFile()) {
                         if(file.getName().endsWith(".mp3") || file.getName().endsWith(".MP3")) {
                             HashMap<String, String> song = new HashMap<String, String>();
-                            song.put("songTitle", file.getName().substring(0, (file.getName().length() - 4)));
-                            song.put("songPath", file.getAbsolutePath());
-                            if(file.getAbsolutepath.matches("(.*)\\/running\\/(.*)")) {
+                            if (file.getAbsolutePath().matches("(.*)\\/running\\/(.*)")) {
                                 song.put("activity", "running");
                             }
-                            else if(file.getAbsolutepath.matches("(.*)\\/walking\\/(.*)")) {
+                            else if(file.getAbsolutePath().matches("(.*)\\/walking\\/(.*)")) {
                                 song.put("activity", "walking");
                             }
-                            else if(file.getAbsolutepath.matches("(.*)\\/still\\/(.*)")) {
+                            else if(file.getAbsolutePath().matches("(.*)\\/still\\/(.*)")) {
                                 song.put("activity", "still");
                             }
-                            else if(file.getAbsolutepath.matches("(.*)\\/vehicle\\/(.*)")) {
+                            else if(file.getAbsolutePath().matches("(.*)\\/vehicle\\/(.*)")) {
                                 song.put("activity", "vehicle");
                             }
-                            else if(file.getAbsolutepath.matches("(.*)\\/cycling\\/(.*)")) {
+                            else if(file.getAbsolutePath().matches("(.*)\\/cycling\\/(.*)")) {
                                 song.put("activity", "cycling");
                             }
-                            else {
+                            else {
                                 song.put("activity", "default");
                             }
+                            song.put("songTitle", file.getName().substring(0, (file.getName().length() - 4)));
+                            song.put("songPath", file.getAbsolutePath());
                             // Adding each song to SongList
                             songsList.add(song);
                         }

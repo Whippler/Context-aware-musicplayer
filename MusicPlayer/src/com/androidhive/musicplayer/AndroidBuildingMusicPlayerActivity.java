@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.Random;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
@@ -45,6 +49,8 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
         private String currentActivity;
         private TextView activityField;
+	private IntentFilter intFilter;
+	private ActivityRecognitionDriver arDriver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -254,23 +260,49 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 			}
 		});
 		
+		arDriver = new ActivityRecognitionDriver(this);
+		intFilter = new IntentFilter();
+		intFilter.addAction(arDriver.MESSAGES);
+		
+		if(arDriver.GoogleServicesValidator()){
+			activityField.setText("Recognizing the play services");
+			
+			if(!arDriver.isConnected()){
+				arDriver.connect();
+				activityField.setText("Waiting for activities ... ");
+			}
+			
+		}
+		else{
+			activityField.setText("Nop, there's something wrong in here");
+		}
 	}
+
 	
 	/**
 	 * Receiving song index from playlist view
 	 * and play the song
 	 * */
 	@Override
-    protected void onActivityResult(int requestCode,
-                                     int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 100){
-         	 currentSongIndex = data.getExtras().getInt("songIndex");
-         	 // play selected song
-             playSong(currentSongIndex);
+        protected void onActivityResult(int requestCode,
+                                         int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if(resultCode == 100){
+                     currentSongIndex = data.getExtras().getInt("songIndex");
+                     // play selected song
+                 playSong(currentSongIndex);
+            }
+     
         }
- 
-    }
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String received = intent.getStringExtra("TEST");
+			activityField.setText(received);
+		}
+	};	
 	
 	/**
 	 * Function to play a song
