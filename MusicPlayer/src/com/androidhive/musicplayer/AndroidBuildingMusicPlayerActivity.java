@@ -51,6 +51,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
         private TextView activityField;
 	private IntentFilter intFilter;
 	private ActivityRecognitionDriver arDriver;
+        private BroadcastReceiver receiver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -276,9 +277,21 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		else{
 			activityField.setText("Nop, there's something wrong in here");
 		}
+
+	        receiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                            Log.i("onCreate", "Received a broadcast");
+                            // TODO Auto-generated method stub
+                            String received = intent.getStringExtra("TEST");
+                            activityField.setText(received);
+                    }
+                };	
+	
+		registerReceiver(receiver, intFilter);
+		Log.i("onCreate", "receiver has been register");
 	}
 
-	
 	/**
 	 * Receiving song index from playlist view
 	 * and play the song
@@ -295,15 +308,6 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
      
         }
 
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			String received = intent.getStringExtra("TEST");
-			activityField.setText(received);
-		}
-	};	
-	
 	/**
 	 * Function to play a song
 	 * @param songIndex - index of song
@@ -349,18 +353,22 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	 * */
 	private Runnable mUpdateTimeTask = new Runnable() {
 		   public void run() {
-			   long totalDuration = mp.getDuration();
-			   long currentDuration = mp.getCurrentPosition();
-			  
-			   // Displaying Total Duration time
-			   songTotalDurationLabel.setText(""+utils.milliSecondsToTimer(totalDuration));
-			   // Displaying time completed playing
-			   songCurrentDurationLabel.setText(""+utils.milliSecondsToTimer(currentDuration));
-			   
-			   // Updating progress bar
-			   int progress = (int)(utils.getProgressPercentage(currentDuration, totalDuration));
-			   //Log.d("Progress", ""+progress);
-			   songProgressBar.setProgress(progress);
+                           try {
+                               long totalDuration = mp.getDuration();
+                               long currentDuration = mp.getCurrentPosition();
+                              
+                               // Displaying Total Duration time
+                               songTotalDurationLabel.setText(""+utils.milliSecondsToTimer(totalDuration));
+                               // Displaying time completed playing
+                               songCurrentDurationLabel.setText(""+utils.milliSecondsToTimer(currentDuration));
+                               
+                               // Updating progress bar
+                               int progress = (int)(utils.getProgressPercentage(currentDuration, totalDuration));
+                               //Log.d("Progress", ""+progress);
+                               songProgressBar.setProgress(progress);
+                           }
+                           catch(IllegalStateException e){
+                           }
 			   
 			   // Running this thread after 100 milliseconds
 		       mHandler.postDelayed(this, 100);
@@ -434,6 +442,9 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	 public void onDestroy(){
 	 super.onDestroy();
 	    mp.release();
+            arDriver.disconnect();
+            unregisterReceiver(receiver);
+            arDriver = null;
 	 }
 	
 }
