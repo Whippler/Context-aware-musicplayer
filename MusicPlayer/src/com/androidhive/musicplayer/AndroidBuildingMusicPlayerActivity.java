@@ -20,6 +20,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
@@ -84,9 +86,10 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		
 		// Getting all songs list
 		songsList = songManager.getPlayList();
+                songManager.updateFilteredList("default");
 		
-		// By default play first song
-		playSong(0);
+		// By default DON'T play first song
+		//playSong(0);
 				
 		/**
 		 * Play button click event
@@ -168,14 +171,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 			@Override
 			public void onClick(View arg0) {
 				// check if next song is there or not
-				if(currentSongIndex < (songsList.size() - 1)){
-					playSong(currentSongIndex + 1);
-					currentSongIndex = currentSongIndex + 1;
-				}else{
-					// play first song
-					playSong(0);
-					currentSongIndex = 0;
-				}
+                                playSong(nextActivitySongIndex(currentSongIndex));
 				
 			}
 		});
@@ -281,9 +277,19 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	        receiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                            Log.i("onCreate", "Received a broadcast");
+                            Log.i("onReceive", "Received a broadcast");
                             // TODO Auto-generated method stub
                             String received = intent.getStringExtra("TEST");
+                            try {
+                                JSONObject json = new JSONObject(received);
+                                String type = json.getString("MessageType");
+                                String activity = json.getString("ActivityName");
+                                currentActivity = activity;
+                                songManager.updateFilteredList(activity);
+                                received = activity+": "+received;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             activityField.setText(received);
                     }
                 };	
@@ -308,11 +314,39 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
      
         }
 
+        private int nextActivitySongIndex(int songIndex) {
+            int new_index;
+            ArrayList<Integer> filteredList = songManager.getFilteredList();
+            new_index = filteredList.indexOf(songIndex);
+            // check for repeat is ON or OFF
+            if(isRepeat){
+                    // repeat is on play same song again
+                    currentSongIndex = songIndex;
+            } else if (new_index == -1){
+                    currentSongIndex = filteredList.get(0);
+            } else if(isShuffle){
+                    // shuffle is on - play a random song
+                    Random rand = new Random();
+                    new_index = rand.nextInt((filteredList.size() - 1) - 0 + 1) + 0;
+                    currentSongIndex = filteredList.get(new_index);
+            } else{
+                    // no repeat or shuffle ON - play next song
+                    if(new_index < (filteredList.size() - 1)){
+                            new_index = new_index + 1;
+                    }else{
+                            // play first song
+                            new_index = 0;
+                }
+                currentSongIndex = filteredList.get(new_index);
+            }
+            return currentSongIndex;
+        }
+
 	/**
 	 * Function to play a song
 	 * @param songIndex - index of song
 	 * */
-	public void  playSong(int songIndex){
+	public void playSong(int songIndex){
 		// Play song
 		try {
         	mp.reset();
@@ -347,7 +381,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	public void updateProgressBar() {
         mHandler.postDelayed(mUpdateTimeTask, 100);        
     }	
-	
+
 	/**
 	 * Background Runnable thread
 	 * */
@@ -369,7 +403,6 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                            }
                            catch(IllegalStateException e){
                            }
-			   
 			   // Running this thread after 100 milliseconds
 		       mHandler.postDelayed(this, 100);
 		   }
@@ -415,27 +448,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	 * */
 	@Override
 	public void onCompletion(MediaPlayer arg0) {
-		
-		// check for repeat is ON or OFF
-		if(isRepeat){
-			// repeat is on play same song again
-			playSong(currentSongIndex);
-		} else if(isShuffle){
-			// shuffle is on - play a random song
-			Random rand = new Random();
-			currentSongIndex = rand.nextInt((songsList.size() - 1) - 0 + 1) + 0;
-			playSong(currentSongIndex);
-		} else{
-			// no repeat or shuffle ON - play next song
-			if(currentSongIndex < (songsList.size() - 1)){
-				playSong(currentSongIndex + 1);
-				currentSongIndex = currentSongIndex + 1;
-			}else{
-				// play first song
-				playSong(0);
-				currentSongIndex = 0;
-			}
-		}
+            playSong(nextActivitySongIndex(currentSongIndex));
 	}
 	
 	@Override

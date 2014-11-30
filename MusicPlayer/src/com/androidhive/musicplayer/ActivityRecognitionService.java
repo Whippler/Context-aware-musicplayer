@@ -78,7 +78,7 @@ public class ActivityRecognitionService extends IntentService {
 	public void broadcastMessage(String message){
 		
 		Intent i = new Intent(MESSAGES);
-		i.putExtra("TEST", "IF YOU SEE THIS THEN IT IS WORKING\n" + message );
+		i.putExtra("TEST", message );
 		sendBroadcast(i);
 	}
 	

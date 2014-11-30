@@ -32,16 +32,16 @@ public class PlayListActivity extends ListActivity {
 		for (int i = 0; i < songsList.size(); i++) {
 			// creating new HashMap
 			HashMap<String, String> song = songsList.get(i);
-
+                        song.put("compoundTitle", song.get("songTitle")+", "+song.get("activity"));
 			// adding HashList to ArrayList
 			songsListData.add(song);
 		}
 
 		// Adding menuItems to ListView
 		ListAdapter adapter = new SimpleAdapter(this, songsListData,
-				R.layout.playlist_item, new String[] { "songTitle", "activity" }, new int[] {
+				R.layout.playlist_item, new String[] { "compoundTitle" }, new int[] {
 						R.id.songTitle });
-
+                //adapter.setViewBinder();
 		setListAdapter(adapter);
 
 		// selecting single ListView item

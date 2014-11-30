@@ -12,10 +12,10 @@ public class SongsManager {
 	final String MEDIA_PATH = new String("/storage/sdcard0/");
 	final static String MEDIA_PATH2 = new String("/storage/SD card/Media/Music/Arch Enemy");
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
+	private ArrayList<Integer> filteredList = new ArrayList<Integer>();
 	
 	// Constructor
 	public SongsManager(){
-		
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public class SongsManager {
             return songsList;
 	}
 
-	private String getMusicDirectory(File root){
+	public String getMusicDirectory(File root){
 		
 		String retPath = "";
 		
@@ -55,19 +55,22 @@ public class SongsManager {
                         if(file.getName().endsWith(".mp3") || file.getName().endsWith(".MP3")) {
                             HashMap<String, String> song = new HashMap<String, String>();
                             if (file.getAbsolutePath().matches("(.*)\\/running\\/(.*)")) {
-                                song.put("activity", "running");
+                                song.put("activity", "Running");
                             }
-                            else if(file.getAbsolutePath().matches("(.*)\\/walking\\/(.*)")) {
-                                song.put("activity", "walking");
+                            else if(file.getAbsolutePath().matches("(.*)\\/foot\\/(.*)")) {
+                                song.put("activity", "On foot");
                             }
                             else if(file.getAbsolutePath().matches("(.*)\\/still\\/(.*)")) {
-                                song.put("activity", "still");
+                                song.put("activity", "Still");
+                            }
+                            else if(file.getAbsolutePath().matches("(.*)\\/tilting\\/(.*)")) {
+                                song.put("activity", "Tilting");
                             }
                             else if(file.getAbsolutePath().matches("(.*)\\/vehicle\\/(.*)")) {
-                                song.put("activity", "vehicle");
+                                song.put("activity", "Vehicle");
                             }
                             else if(file.getAbsolutePath().matches("(.*)\\/cycling\\/(.*)")) {
-                                song.put("activity", "cycling");
+                                song.put("activity", "Cycling");
                             }
                             else {
                                 song.put("activity", "default");
@@ -82,10 +85,30 @@ public class SongsManager {
                     }
                 }
             }
-            catch(Exception e){
+            catch (Exception e) {
                 return null;
             }
             return songsList;
+        }
+
+        public void updateFilteredList(String activity) {
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            for(int i = 0; i < songsList.size(); i++) {
+                HashMap<String, String> song = songsList.get(i);
+                if(song.get("activity").equals(activity)) {
+                    list.add(i);
+                }
+            }
+            if(list.size() == 0) {
+                for(int i=0; i<songsList.size();i++) {
+                    list.add(i);
+                }
+            }
+            filteredList = list;
+        }
+
+	public ArrayList<Integer> getFilteredList() {
+            return filteredList;
         }
 	
 	/**
