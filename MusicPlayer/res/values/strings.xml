@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, AndroidBuildingMusicPlayerActivity!</string>
-    <string name="app_name">AndroidBuildingMusicPlayer</string>
+    <string name="app_name">ContextBMusicPlayer</string>
+    <string name="player_prefs_key">someKey1</string>
+    <string name="default_lat">60.204507</string>
+    <string name="default_lon">24.97109</string>
 
 </resources>

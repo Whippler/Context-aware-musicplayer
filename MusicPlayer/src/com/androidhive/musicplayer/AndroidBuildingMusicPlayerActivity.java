@@ -23,6 +23,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import org.json.JSONObject;
 import org.json.JSONException;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
@@ -50,24 +52,38 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	private boolean isShuffle = false;
 	private boolean isRepeat = false;
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
-    	private String currentActivity;
+    	private String currentActivity = "Unknown";
     	private String currentLocation;
         private TextView activityField;
-    /** Message Handler*/
-    private IntentFilter filter;
-    private BroadcastReceiver receiver;
+        /** Message Handler*/
+        private IntentFilter filter;
+        private BroadcastReceiver receiver;
+        private SharedPreferences mPrefs;
+        private Editor prefEditor;
+        private double currentLat;
+        private double currentLon;
+        private double lat1, lon1, lat2, lon2;
     
 	//Location
 	LocationDriver locDriver;	
 	//Activity
 	private ActivityRecognitionDriver arDriver;
-        
 	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
+		mPrefs = getApplicationContext().getSharedPreferences("test", Context.MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = mPrefs.edit();
+                float defaultLat = new Float(getResources().getString(R.string.default_lat));
+                float defaultLon = new Float(getResources().getString(R.string.default_lon));
+                lat1 = new Double(mPrefs.getFloat("homeLat", defaultLat));
+                lon1 = new Double(mPrefs.getFloat("homeLon", defaultLon));
+                lat2 = new Double(mPrefs.getFloat("workLat", defaultLat));
+                lon2 = new Double(mPrefs.getFloat("workLon", defaultLon));
+                currentLat = lat1;
+                currentLon = lon1;
 		
 		// All player buttons
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
@@ -86,7 +102,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		
 		// Mediaplayer
 		mp = new MediaPlayer();
-		songManager = new SongsManager();
+		songManager = new SongsManager(getApplicationContext());
 		utils = new Utilities();
 		
 		// Listeners
@@ -95,7 +111,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		
 		// Getting all songs list
 		songsList = songManager.getPlayList();
-                songManager.updateFilteredList("default");
+                songManager.updateFilteredList("default", currentLat, currentLon);
 		
 		// By default DON'T play first song
 		//playSong(0);
@@ -294,25 +310,42 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                                 JSONObject json = new JSONObject(received);
                                 //String type = json.getString("MessageType");
                                 if(json.get("MessageType").equals("ActivityRecognition")){
-                                	String activity = json.getString("ActivityName");
+                                    String activity = json.getString("ActivityName");
+                                    if(!currentActivity.equals(activity)) {
+                                        songManager.updateFilteredList(activity, currentLat, currentLon);
+                                    }
                                     currentActivity = activity;
-                                    songManager.updateFilteredList(activity);
-                                    received = (currentLocation!=null) ? currentActivity + " in " + currentLocation : currentActivity;
+                                    received = (currentLocation!=null) ? currentActivity + ", in " + currentLocation : currentActivity;
                                 }
                                 else if(json.get("MessageType").equals("Location")){
+                                        String[] coordinateString;
+                                        Double lat, lon;
                                 	currentLocation = json.getString("City");
                                 	currentLocation += ", " + json.getString("Country");
-                                	received = (currentActivity!=null) ? currentActivity + " in " + currentLocation : currentLocation;
+                                	received = (currentActivity!=null) ? currentActivity + ", in " + currentLocation : currentLocation;
+                                        coordinateString = json.getString("Coordinates").split(",");
+                                        lat = new Double(coordinateString[0]);
+                                        lon = new Double(coordinateString[1]);
+                                        if(lat != currentLat || lon != currentLon) {
+                                            songManager.updateFilteredList(currentActivity, currentLat, currentLon);
+                                        }
+                                        currentLat = lat;
+                                        currentLon = lon;
                                 }
                                 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            received = received + " (" + currentLat + ", "+ currentLon +")";
+                            String nearestLoc = songManager.checkLocation();
+                            if(!nearestLoc.equals("other")) {
+                                received = received + " near " + nearestLoc;
+                            }
                             activityField.setText(received);
                     }
                 };	
 	
-		//registerReceiver(receiver, intFilter);
+		registerReceiver(receiver, filter);
 		//Log.i("onCreate", "receiver has been register");
 	}
 	
@@ -506,7 +539,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	
 	@Override
 	 public void onDestroy(){
-	 super.onDestroy();
+            super.onDestroy();
 	    mp.release();
             arDriver.disconnect();
             unregisterReceiver(receiver);

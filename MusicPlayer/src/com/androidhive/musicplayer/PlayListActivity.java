@@ -24,7 +24,7 @@ public class PlayListActivity extends ListActivity {
 
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
 
-		SongsManager plm = new SongsManager();
+		SongsManager plm = new SongsManager(getApplicationContext());
 		// get all songs from sdcard
 		this.songsList = plm.getPlayList();
 
@@ -32,7 +32,7 @@ public class PlayListActivity extends ListActivity {
 		for (int i = 0; i < songsList.size(); i++) {
 			// creating new HashMap
 			HashMap<String, String> song = songsList.get(i);
-                        song.put("compoundTitle", song.get("songTitle")+", "+song.get("activity"));
+                        song.put("compoundTitle", song.get("songTitle")+", "+song.get("activity")+", "+song.get("location"));
 			// adding HashList to ArrayList
 			songsListData.add(song);
 		}
