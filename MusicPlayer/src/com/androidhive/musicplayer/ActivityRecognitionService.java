@@ -12,10 +12,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
-public class ActivityRecognitionService extends IntentService {
+public class ActivityRecognitionService extends IntentService{
 
-	public final static String MESSAGES = "com.example.playerdetection.ACTIVITY_RECOGNITION_DATA";
-	private final static String SHARED_PREFERENCES = "com.example.playerdetection.SHARED_PREFERENCES";
 	public static final String prefKeyType = "PREVIOUS_ACTIVITY";
 	private SharedPreferences mPrefs;
 	
@@ -28,10 +26,9 @@ public class ActivityRecognitionService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		
-		mPrefs = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+		mPrefs = getApplicationContext().getSharedPreferences(RecognitionUtilities.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 		
 		if(ActivityRecognitionResult.hasResult(intent)){
-			
 			// Get the update
 			ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
 			Log.i("Service", getType(result.getMostProbableActivity().getType()) +"\t" + result.getMostProbableActivity().getConfidence());
@@ -41,21 +38,20 @@ public class ActivityRecognitionService extends IntentService {
             
             int activityType = mostProbableActivity.getType();
             
-            // Get the message that will be sent
-            JSONObject json = activityToJson(mostProbableActivity);
-		
             //If there's no activity yet or the new one is greater than the old one
             if (!mPrefs.contains(prefKeyType)){
             	storeActivity(activityType);
-            	broadcastMessage(json.toString());
+            	RecognitionUtilities.sendMessage(this, toJson(mostProbableActivity).toString());
             }
             else if (activityChanged(activityType) && mostProbableActivity.getConfidence() > 50){
             	storeActivity(activityType);
-            	broadcastMessage(json.toString()); //It will send it just if the activity is different to the last one
+            	RecognitionUtilities.sendMessage(this, toJson(mostProbableActivity).toString());
             }
+            
 		}
+		
 	}
-
+	
 	/**Detects if the new values is different form the last activity */
 	private boolean activityChanged(int currentType) {
 		
@@ -67,19 +63,14 @@ public class ActivityRecognitionService extends IntentService {
 		}
 	}
 	
+	/** Store the last activity value */
 	public void storeActivity(int activityType){
-		//Used to store the last activity value
+
 		Editor editor = mPrefs.edit();
    	 	editor.putInt(prefKeyType, activityType);
    	 
    	 	editor.commit();
-	}
-	
-	public void broadcastMessage(String message){
-		
-		Intent i = new Intent(MESSAGES);
-		i.putExtra("TEST", message );
-		sendBroadcast(i);
+   	 	
 	}
 	
 	private String getType(int type){
@@ -99,21 +90,22 @@ public class ActivityRecognitionService extends IntentService {
 			return "";
 	}
 	
-	private JSONObject activityToJson(DetectedActivity mostProbableActivity){
+	private JSONObject toJson(DetectedActivity mostProbableActivity){
 		JSONObject retVal = new JSONObject();
-		  try {
-			  retVal.put("MessageType", "ActivityRecognition");
-		    retVal.put("ActivityID", mostProbableActivity.getType());
-		    retVal.put("ActivityName", getType(mostProbableActivity.getType()));
-		    retVal.put("ActivityConfidence", mostProbableActivity.getConfidence());
-		    return retVal;
+		try {
+			retVal.put("MessageType", "ActivityRecognition");
+			retVal.put("ActivityID", mostProbableActivity.getType());
+			retVal.put("ActivityName", getType(mostProbableActivity.getType()));
+			retVal.put("ActivityConfidence", mostProbableActivity.getConfidence());
+			return retVal;
 		    
-		  }
-		  catch(Exception e){
-			  Log.e("ActivityRecognitionService", "Error trying to parse to Json");
+		}
+		catch(Exception e){
+			Log.e("ActivityRecognitionService", "Error trying to parse to Json");
 			  
-			  return null;
-		  }
+			return null;
+		}
+		
 	}
-	
+
 }

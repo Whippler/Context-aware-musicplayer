@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -49,11 +50,19 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	private boolean isShuffle = false;
 	private boolean isRepeat = false;
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
-        private String currentActivity;
+    	private String currentActivity;
+    	private String currentLocation;
         private TextView activityField;
-	private IntentFilter intFilter;
+    /** Message Handler*/
+    private IntentFilter filter;
+    private BroadcastReceiver receiver;
+    
+	//Location
+	LocationDriver locDriver;	
+	//Activity
 	private ActivityRecognitionDriver arDriver;
-        private BroadcastReceiver receiver;
+        
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -257,17 +266,18 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 			}
 		});
 		
+		locDriver = new LocationDriver(this);
 		arDriver = new ActivityRecognitionDriver(this);
-		intFilter = new IntentFilter();
-		intFilter.addAction(arDriver.MESSAGES);
 		
-		if(arDriver.GoogleServicesValidator()){
+		//Message handler
+		filter = new IntentFilter(RecognitionUtilities.MESSAGES);
+		filter.addAction(RecognitionUtilities.MESSAGES);
+		
+		if(RecognitionUtilities.GoogleServicesValidator(this)){
 			activityField.setText("Recognizing the play services");
-			
-			if(!arDriver.isConnected()){
-				arDriver.connect();
-				activityField.setText("Waiting for activities ... ");
-			}
+			locDriver.connect();
+			arDriver.connect();
+			activityField.setText("Waiting for activities ... ");
 			
 		}
 		else{
@@ -279,14 +289,22 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                     public void onReceive(Context context, Intent intent) {
                             Log.i("onReceive", "Received a broadcast");
                             // TODO Auto-generated method stub
-                            String received = intent.getStringExtra("TEST");
+                            String received = intent.getStringExtra("Message");
                             try {
                                 JSONObject json = new JSONObject(received);
-                                String type = json.getString("MessageType");
-                                String activity = json.getString("ActivityName");
-                                currentActivity = activity;
-                                songManager.updateFilteredList(activity);
-                                received = activity+": "+received;
+                                //String type = json.getString("MessageType");
+                                if(json.get("MessageType").equals("ActivityRecognition")){
+                                	String activity = json.getString("ActivityName");
+                                    currentActivity = activity;
+                                    songManager.updateFilteredList(activity);
+                                    received = (currentLocation!=null) ? currentActivity + " in " + currentLocation : currentActivity;
+                                }
+                                else if(json.get("MessageType").equals("Location")){
+                                	currentLocation = json.getString("City");
+                                	currentLocation += ", " + json.getString("Country");
+                                	received = (currentActivity!=null) ? currentActivity + " in " + currentLocation : currentLocation;
+                                }
+                                
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -294,8 +312,43 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                     }
                 };	
 	
-		registerReceiver(receiver, intFilter);
+		//registerReceiver(receiver, intFilter);
+		//Log.i("onCreate", "receiver has been register");
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		
+		// Register the receiver
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("MainActivity"));
 		Log.i("onCreate", "receiver has been register");
+	}
+	
+	@Override
+	public void onPause(){
+		super.onPause();
+		// Stop receiving updates from the location
+		if(locDriver.isConnected()){ 
+			locDriver.stopPeriodicUpdates();
+		}
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
+		
+		// Stop updates from the location
+		if(locDriver.isConnected()){
+			locDriver.stopPeriodicUpdates();
+		}
+		
+		// Disconnect from the google play services
+		locDriver.disconnect();
+		arDriver.disconnect();
+		
+		// Unregister the receiver
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 	}
 
 	/**
