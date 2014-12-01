@@ -1,6 +1,7 @@
 package com.androidhive.musicplayer;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -10,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -53,10 +55,13 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
     	private String currentActivity;
     	private String currentLocation;
         private TextView activityField;
+        private String noiseLevel;
     /** Message Handler*/
     private IntentFilter filter;
     private BroadcastReceiver receiver;
-    
+    //Noise
+    private TextView noiseText;
+    private NoiseDetector noiseDetector;
 	//Location
 	LocationDriver locDriver;	
 	//Activity
@@ -83,6 +88,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
 		songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 		activityField = (TextView) findViewById(R.id.activityField);
+		noiseText = (TextView)findViewById(R.id.noiseField);
 		
 		// Mediaplayer
 		mp = new MediaPlayer();
@@ -268,6 +274,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		
 		locDriver = new LocationDriver(this);
 		arDriver = new ActivityRecognitionDriver(this);
+		noiseDetector = new NoiseDetector(this);
 		
 		//Message handler
 		filter = new IntentFilter(RecognitionUtilities.MESSAGES);
@@ -320,6 +327,9 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	public void onResume(){
 		super.onResume();
 		
+		//Start recording for the noise threshold
+		noiseDetector.startRecording();
+		
 		// Register the receiver
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("MainActivity"));
 		Log.i("onCreate", "receiver has been register");
@@ -337,6 +347,9 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 	@Override
 	public void onStop(){
 		super.onStop();
+		
+		// Noise
+		noiseDetector.stopRecording();
 		
 		// Stop updates from the location
 		if(locDriver.isConnected()){
@@ -453,6 +466,20 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                                int progress = (int)(utils.getProgressPercentage(currentDuration, totalDuration));
                                //Log.d("Progress", ""+progress);
                                songProgressBar.setProgress(progress);
+                               
+                               // Noise Detector
+                               
+                               Double amp = noiseDetector.getAmplitude();
+                               DecimalFormat df = new DecimalFormat("#.00"); // reduces the amount of decimals
+                               noiseLevel = ((amp.isInfinite()) ? "0.0" : df.format(amp)); // if the value is infinity
+                               
+                               noiseText.setText("Noise: " + noiseLevel);
+                               
+                               AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                               if(amp>RecognitionUtilities.NOISE_THRESHOLD){
+                            	   noiseDetector.modifyVolume(audioManager);
+                               }
+                               
                            }
                            catch(IllegalStateException e){
                            }
