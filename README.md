@@ -12,5 +12,5 @@ https://docs.google.com/document/d/1GrKl6-47qfDupWYDK6496t-q0Fbei65Dxhr6H38iIfs/
 Research summary
 https://docs.google.com/document/d/1aAijeCYrcx5su1-lMQ3bOHpoVyo0QOLyvOVjLPyML0k/edit
 
-Sources for using heart rate sensor
-https://code.google.com/p/mytracks/source/browse/MyTracks/src/com/google/android/apps/mytracks/services/sensors/PolarMessageParser.java
+Final report
+https://docs.google.com/document/d/1OOPO7P30Dg7ckdO4KP52oQEsTb4eLEH4Pw4tAQTlJYw/edit#
