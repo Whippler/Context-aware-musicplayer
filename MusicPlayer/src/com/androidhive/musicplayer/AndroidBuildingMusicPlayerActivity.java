@@ -76,12 +76,14 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
 		setContentView(R.layout.player);
 		mPrefs = getApplicationContext().getSharedPreferences("test", Context.MODE_PRIVATE);
                 SharedPreferences.Editor prefEditor = mPrefs.edit();
-                float defaultLat = new Float(getResources().getString(R.string.default_lat));
-                float defaultLon = new Float(getResources().getString(R.string.default_lon));
-                lat1 = new Double(mPrefs.getFloat("homeLat", defaultLat));
-                lon1 = new Double(mPrefs.getFloat("homeLon", defaultLon));
-                lat2 = new Double(mPrefs.getFloat("workLat", defaultLat));
-                lon2 = new Double(mPrefs.getFloat("workLon", defaultLon));
+                float homeLat = new Float(getResources().getString(R.string.default_lat));
+                float homeLon = new Float(getResources().getString(R.string.default_lon));
+                float workLat = new Float(getResources().getString(R.string.default_lat2));
+                float workLon = new Float(getResources().getString(R.string.default_lon2));
+                lat1 = new Double(mPrefs.getFloat("homeLat", homeLat));
+                lon1 = new Double(mPrefs.getFloat("homeLon", homeLon));
+                lat2 = new Double(mPrefs.getFloat("workLat", workLat));
+                lon2 = new Double(mPrefs.getFloat("workLon", workLon));
                 currentLat = lat1;
                 currentLon = lon1;
 		

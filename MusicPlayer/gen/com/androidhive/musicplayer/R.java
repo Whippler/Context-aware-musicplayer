@@ -595,7 +595,9 @@ containing a value of this type.
         public static final int create_calendar_title=0x7f050004;
         public static final int decline=0x7f050003;
         public static final int default_lat=0x7f050026;
+        public static final int default_lat2=0x7f050028;
         public static final int default_lon=0x7f050027;
+        public static final int default_lon2=0x7f050029;
         public static final int player_prefs_key=0x7f050025;
         public static final int radius=0x7f050023;
         public static final int store_picture_message=0x7f050001;

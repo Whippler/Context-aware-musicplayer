@@ -3,7 +3,9 @@
 
     <string name="app_name">ContextBMusicPlayer</string>
     <string name="player_prefs_key">someKey1</string>
-    <string name="default_lat">60.204507</string>
-    <string name="default_lon">24.97109</string>
+    <string name="default_lat">60.2102771</string>
+    <string name="default_lon">24.9664197</string>
+    <string name="default_lat2">60.2045698</string>
+    <string name="default_lon2">24.9622089</string>
 
 </resources>

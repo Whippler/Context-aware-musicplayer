@@ -96,7 +96,16 @@ public class SongsManager {
                             else {
                                 song.put("activity", "default");
                             }
-                            song.put("location", locations[r.nextInt(locations.length)]);
+
+                            if (file.getAbsolutePath().matches("(.*)\\/work\\/(.*)")) {
+                                song.put("location", "work");
+                            }
+                            else if(file.getAbsolutePath().matches("(.*)\\/home\\/(.*)")) {
+                                song.put("location", "home");
+                            }
+                            else {
+                                song.put("location", "other");
+                            }
                             song.put("songTitle", file.getName().substring(0, (file.getName().length() - 4)));
                             song.put("songPath", file.getAbsolutePath());
                             // Adding each song to SongList
