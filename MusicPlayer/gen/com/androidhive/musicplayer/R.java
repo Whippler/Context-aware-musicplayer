@@ -440,14 +440,14 @@ containing a value of this type.
     public static final class id {
         public static final int activityField=0x7f070018;
         public static final int book_now=0x7f070010;
-        public static final int btnBackward=0x7f07001c;
-        public static final int btnForward=0x7f07001e;
-        public static final int btnNext=0x7f07001f;
-        public static final int btnPlay=0x7f07001d;
+        public static final int btnBackward=0x7f07001d;
+        public static final int btnForward=0x7f07001f;
+        public static final int btnNext=0x7f070020;
+        public static final int btnPlay=0x7f07001e;
         public static final int btnPlaylist=0x7f070016;
-        public static final int btnPrevious=0x7f07001b;
-        public static final int btnRepeat=0x7f070024;
-        public static final int btnShuffle=0x7f070025;
+        public static final int btnPrevious=0x7f07001c;
+        public static final int btnRepeat=0x7f070025;
+        public static final int btnShuffle=0x7f070026;
         public static final int buyButton=0x7f07000a;
         public static final int buy_now=0x7f07000f;
         public static final int buy_with_google=0x7f07000e;
@@ -458,23 +458,24 @@ containing a value of this type.
         public static final int hybrid=0x7f070004;
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
+        public static final int noiseField=0x7f070019;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
         public static final int player_activity_bg=0x7f070017;
-        public static final int player_footer_bg=0x7f07001a;
+        public static final int player_footer_bg=0x7f07001b;
         public static final int player_header_bg=0x7f070014;
         public static final int production=0x7f070007;
         public static final int sandbox=0x7f070008;
         public static final int satellite=0x7f070002;
         public static final int selectionDetails=0x7f07000b;
-        public static final int songCurrentDurationLabel=0x7f070022;
-        public static final int songProgressBar=0x7f070020;
-        public static final int songThumbnail=0x7f070019;
+        public static final int songCurrentDurationLabel=0x7f070023;
+        public static final int songProgressBar=0x7f070021;
+        public static final int songThumbnail=0x7f07001a;
         public static final int songTitle=0x7f070015;
-        public static final int songTotalDurationLabel=0x7f070023;
+        public static final int songTotalDurationLabel=0x7f070024;
         public static final int strict_sandbox=0x7f070009;
         public static final int terrain=0x7f070003;
-        public static final int timerDisplay=0x7f070021;
+        public static final int timerDisplay=0x7f070022;
         public static final int wrap_content=0x7f07000d;
     }
     public static final class integer {
