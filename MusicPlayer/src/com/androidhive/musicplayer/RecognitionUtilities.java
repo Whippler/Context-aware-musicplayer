@@ -10,7 +10,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class RecognitionUtilities {
 	//Important values that could be modified
-	private static final int DETECTION_INTERVAL_SECONDS = 1;
+	private static final int DETECTION_INTERVAL_SECONDS = 10;
 	private static final int LOCATION_UPDATE_INTERVAL_IN_SECONDS = 120;
 	private static final int LOCATION_FAST_INTERVAL_CEILING_IN_SECONDS = 1;
 	public static final int NOISE_THRESHOLD = 10;

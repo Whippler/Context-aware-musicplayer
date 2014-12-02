@@ -46,11 +46,15 @@ public class NoiseDetector {
 	}
 	
 	public void stopRecording(){
-		if(mediaRecorder!=null){
-			mediaRecorder.stop();       
-			mediaRecorder.release();
-			mediaRecorder = null;
-		}
+                try{
+                    if(mediaRecorder!=null){
+                            mediaRecorder.stop();       
+                            mediaRecorder.release();
+                            mediaRecorder = null;
+                    }
+                } 
+                catch (IllegalStateException e){
+                }
 	}
 	
 	public double getAmplitude(){
@@ -67,7 +71,7 @@ public class NoiseDetector {
 		Toast.makeText(context, "Noise Thersold Crossed", Toast.LENGTH_SHORT).show();
 		
 		int actualVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-		if(actualVolume <= audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)){
+		if(actualVolume <= audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)-10){
 			audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, actualVolume+1, AudioManager.FLAG_VIBRATE);
 		}
 	}

@@ -315,6 +315,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                             Log.i("onReceive", "Received a broadcast");
                             // TODO Auto-generated method stub
                             String received = intent.getStringExtra("Message");
+                            Boolean stateChanged = false;
                             try {
                                 JSONObject json = new JSONObject(received);
                                 //String type = json.getString("MessageType");
@@ -322,6 +323,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                                     String activity = json.getString("ActivityName");
                                     if(!currentActivity.equals(activity)) {
                                         songManager.updateFilteredList(activity, currentLat, currentLon);
+                                        stateChanged = true;
                                     }
                                     currentActivity = activity;
                                     received = (currentLocation!=null) ? currentActivity + ", in " + currentLocation : currentActivity;
@@ -350,24 +352,26 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                             if(!nearestLoc.equals("other")) {
                                 received = received + " near " + nearestLoc;
                             }
+                            if(stateChanged) { 
+                                playSong(nextActivitySongIndex(currentSongIndex));
+                            }
                             activityField.setText(received);
                     }
                 };	
 	
-		registerReceiver(receiver, filter);
+		//registerReceiver(receiver, filter);
 		//Log.i("onCreate", "receiver has been register");
+		
+		// Register the receiver
+		Log.i("onCreate", "receiver has been register");
 	}
 	
 	@Override
 	public void onResume(){
 		super.onResume();
-		
-		//Start recording for the noise threshold
 		noiseDetector.startRecording();
-		
-		// Register the receiver
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("MainActivity"));
-		Log.i("onCreate", "receiver has been register");
+		//Start recording for the noise threshold
 	}
 	
 	@Override
@@ -571,7 +575,12 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
             super.onDestroy();
 	    mp.release();
             arDriver.disconnect();
-            unregisterReceiver(receiver);
+            try {
+                unregisterReceiver(receiver);
+            }
+            catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
             arDriver = null;
 	 }
 	
