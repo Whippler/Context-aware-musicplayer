@@ -1,4 +1,4 @@
-package com.androidhive.musicplayer;
+package com.inttech.musicplayer;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -28,7 +28,7 @@ import org.json.JSONException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class MusicPlayerActivity extends Activity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
 	private ImageButton btnPlay;
 	private ImageButton btnForward;
@@ -444,6 +444,7 @@ public class AndroidBuildingMusicPlayerActivity extends Activity implements OnCo
                 }
                 currentSongIndex = filteredList.get(new_index);
             }
+            Log.i("nextActivitySongIndex", Integer.toString(currentSongIndex));
             return currentSongIndex;
         }
 

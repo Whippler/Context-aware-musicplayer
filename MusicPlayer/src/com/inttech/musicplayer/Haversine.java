@@ -1,4 +1,4 @@
-package com.androidhive.musicplayer;
+package com.inttech.musicplayer;
 
 public class Haversine {
     public static final double R = 6372.8; // In kilometers

@@ -1,4 +1,4 @@
-package com.androidhive.musicplayer;
+package com.inttech.musicplayer;
 
 import org.json.JSONObject;
 

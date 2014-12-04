@@ -1,4 +1,4 @@
-package com.androidhive.musicplayer;
+package com.inttech.musicplayer;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -14,7 +14,7 @@ import android.content.SharedPreferences.Editor;
 public class SongsManager {
 	// SDCard Path
 	final String MEDIA_PATH = new String("/storage/sdcard0");
-	final static String MEDIA_PATH2 = new String("/storage/SD card/Media/Music/Arch Enemy");
+	final static String MEDIA_PATH2 = new String("/storage/");
 	private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	private ArrayList<Integer> filteredList = new ArrayList<Integer>();
         public double currentLat;
@@ -30,10 +30,12 @@ public class SongsManager {
 		mPrefs = context.getSharedPreferences("test", Context.MODE_PRIVATE);
                 float defaultLat = new Float(context.getResources().getString(R.string.default_lat));
                 float defaultLon = new Float(context.getResources().getString(R.string.default_lon));
+                float defaultLat2 = new Float(context.getResources().getString(R.string.default_lat2));
+                float defaultLon2 = new Float(context.getResources().getString(R.string.default_lon2));
                 lat1 = new Double(mPrefs.getFloat("homeLat", defaultLat));
                 lon1 = new Double(mPrefs.getFloat("homeLon", defaultLon));
-                lat2 = new Double(mPrefs.getFloat("workLat", defaultLat));
-                lon2 = new Double(mPrefs.getFloat("workLon", defaultLon));
+                lat2 = new Double(mPrefs.getFloat("workLat", defaultLat2));
+                lon2 = new Double(mPrefs.getFloat("workLon", defaultLon2));
                 this.context = context;
 	}
 	

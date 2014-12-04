@@ -1,5 +1,5 @@
 //package com.example.playerdetection;
-package com.androidhive.musicplayer;
+package com.inttech.musicplayer;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
