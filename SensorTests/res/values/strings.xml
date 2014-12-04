@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sensor tests</string>
+    <string name="sensor_info">NA</string>
+    <string name="x_value">0</string>
+    <string name="x_label">X-Axis</string>
+    <string name="y_value">zero</string>
+    <string name="y_label">Y-Axis</string>
+    <string name="z_value">"0"</string>
+    <string name="z_label">Z-Axis</string>
+    <string name="step_label">Steps</string>
+</resources>
